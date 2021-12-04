@@ -1,7 +1,7 @@
 <div class="page-container"
-     *ngIf="isLoading">
+     *ngIf="isLoading$ | async">
   <p class="message">Loading...</p>
 </div>
-<div *ngIf="!isLoading">
+<div *ngIf="!(isLoading$ | async)">
   <router-outlet></router-outlet>
 </div>

@@ -10,12 +10,12 @@ import { PostModeEnum } from '../models/post-mode.enum';
 })
 export class PostsService {
   private _postsLoaded$ = new BehaviorSubject<boolean>(false);
-  get postsLoaded(){
+  get isLoading$(){
     return this._postsLoaded$.asObservable();
   }
 
   private _posts$ = new BehaviorSubject<Post[]>([]);
-  get postsUpdated(){
+  get posts$(){
     return this._posts$.asObservable();
   }
 
