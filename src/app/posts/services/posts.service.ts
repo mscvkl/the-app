@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { BehaviorSubject, delay, finalize, map, tap } from 'rxjs';
 
 import { Post } from '../models/post';
 import { PostsApiService } from './posts.api.service';
@@ -9,7 +9,15 @@ import { PostModeEnum } from '../models/post-mode.enum';
   providedIn: 'root'
 })
 export class PostsService {
-  private posts$ = new BehaviorSubject<Post[]>([]);
+  private _postsLoaded$ = new BehaviorSubject<boolean>(false);
+  get postsLoaded(){
+    return this._postsLoaded$.asObservable();
+  }
+
+  private _posts$ = new BehaviorSubject<Post[]>([]);
+  get postsUpdated(){
+    return this._posts$.asObservable();
+  }
 
   constructor(
     private postsApiService: PostsApiService
@@ -17,26 +25,28 @@ export class PostsService {
   }
 
   loadAll(){
+    this._postsLoaded$.next(true);
+
     return this.postsApiService
       .getPosts()
       .pipe(
+        delay(1000),
         map((posts)=>{
           return this.addMode(posts);
         }),
         tap((posts)=>{
-          this.posts$.next(posts);
+          this._posts$.next(posts);
+        }),
+        finalize(()=>{
+          this._postsLoaded$.next(false);
         })
       );
-  }
-
-  getAll(){
-    return this.posts$.asObservable();
   }
 
   toggleMode(postId: number, mode?: PostModeEnum){
     let posts: Post[] = [];
 
-    this.posts$.getValue().forEach((post)=>{
+    this._posts$.getValue().forEach((post)=>{
       posts.push({
         ...post,
         mode: post.id === postId
@@ -45,7 +55,7 @@ export class PostsService {
       });
     });
 
-    this.posts$.next(posts);
+    this._posts$.next(posts);
   }
 
   private addMode(posts: Post[]): Post[]{
