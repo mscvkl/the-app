@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { map, tap } from 'rxjs';
+import { delay, finalize, map, tap } from 'rxjs';
 
 import { Post } from '../models/post';
 import { PostsApiService } from './posts.api.service';
@@ -9,9 +9,25 @@ import { PostModeEnum } from '../models/post-mode.enum';
   providedIn: 'root'
 })
 export class PostsService {
-  private posts: Post[] = [];
+  private _isLoading: boolean = false;
+  get isLoading(){
+    return this._isLoading;
+  }
 
-  postsUpdated = new EventEmitter<Post[]>();
+  private _posts: Post[] = [];
+  get posts(){
+    return this._posts;
+  }
+
+  private _postsLoaded = new EventEmitter<boolean>();
+  get postsLoaded(){
+    return this._postsLoaded.asObservable();
+  }
+
+  private _postsUpdated = new EventEmitter<Post[]>();
+  get postsUpdated(){
+    return this._postsUpdated.asObservable();
+  }
 
   constructor(
     private postsApiService: PostsApiService
@@ -19,21 +35,23 @@ export class PostsService {
   }
 
   loadAll(){
+    this.setLoadingState(true);
+
     return this.postsApiService
       .getPosts()
       .pipe(
+        delay(1000),
         map((posts)=>{
           return this.addMode(posts);
         }),
         tap((posts)=>{
           this.storePosts(posts);
-          this.postsUpdated.emit(posts);
+          this._postsUpdated.emit(posts);
+        }),
+        finalize(()=>{
+          this.setLoadingState(false);
         })
       );
-  }
-
-  getAll(){
-    return this.posts;
   }
 
   toggleMode(postId: number, mode?: PostModeEnum){
@@ -49,7 +67,12 @@ export class PostsService {
     });
 
     this.storePosts(posts);
-    this.postsUpdated.emit(posts);
+    this._postsUpdated.emit(posts);
+  }
+
+  private setLoadingState(state: boolean){
+    this._isLoading = state;
+    this._postsLoaded.emit(state);
   }
 
   private addMode(posts: Post[]): Post[]{
@@ -62,7 +85,7 @@ export class PostsService {
   }
 
   private storePosts(posts: Post[]){
-    this.posts = [
+    this._posts = [
       ...posts
     ];
   }

@@ -16,12 +16,12 @@ export class PostsComponent implements OnInit, OnDestroy {
   constructor(
     private postsService: PostsService
   ) {
-    this.posts = this.postsService.getAll();
+    this.posts = this.postsService.posts;
     this.postsUpdatedSubscription = this.postsService.postsUpdated.subscribe(
       (posts)=>{
         this.posts = posts;
       }
-    )
+    );
   }
 
   ngOnInit(): void {
