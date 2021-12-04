@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { Post } from '../models/post';
 import { PostsService } from '../services/posts.service';
@@ -9,30 +9,24 @@ import { PostsService } from '../services/posts.service';
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss']
 })
-export class PostsComponent implements OnInit, OnDestroy {
-  posts: Post[];
-  postsUpdatedSubscription: Subscription;
+export class PostsComponent implements OnInit {
+  posts$: Observable<Post[]>;
 
   constructor(
     private postsService: PostsService
   ) {
-    this.posts = this.postsService.getAll();
-    this.postsUpdatedSubscription = this.postsService.postsUpdated.subscribe(
-      (posts)=>{
-        this.posts = posts;
-      }
-    )
+    this.posts$ = this.postsService.getAll();
   }
 
   ngOnInit(): void {
   }
 
-  ngOnDestroy(): void {
-    this.postsUpdatedSubscription.unsubscribe();
-  }
-
   onPostClicked(post: Post): void {
     this.postsService.toggleMode(post.id, post.mode);
+  }
+
+  trackById(index: number, post: Post){
+    return post?.id;
   }
 
 }

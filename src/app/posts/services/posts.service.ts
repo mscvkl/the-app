@@ -1,5 +1,5 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { map, tap } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, map, tap } from 'rxjs';
 
 import { Post } from '../models/post';
 import { PostsApiService } from './posts.api.service';
@@ -9,9 +9,7 @@ import { PostModeEnum } from '../models/post-mode.enum';
   providedIn: 'root'
 })
 export class PostsService {
-  private posts: Post[] = [];
-
-  postsUpdated = new EventEmitter<Post[]>();
+  private posts$ = new BehaviorSubject<Post[]>([]);
 
   constructor(
     private postsApiService: PostsApiService
@@ -26,20 +24,19 @@ export class PostsService {
           return this.addMode(posts);
         }),
         tap((posts)=>{
-          this.storePosts(posts);
-          this.postsUpdated.emit(posts);
+          this.posts$.next(posts);
         })
       );
   }
 
   getAll(){
-    return this.posts;
+    return this.posts$.asObservable();
   }
 
   toggleMode(postId: number, mode?: PostModeEnum){
     let posts: Post[] = [];
 
-    this.posts.forEach((post)=>{
+    this.posts$.getValue().forEach((post)=>{
       posts.push({
         ...post,
         mode: post.id === postId
@@ -48,8 +45,7 @@ export class PostsService {
       });
     });
 
-    this.storePosts(posts);
-    this.postsUpdated.emit(posts);
+    this.posts$.next(posts);
   }
 
   private addMode(posts: Post[]): Post[]{
@@ -59,12 +55,6 @@ export class PostsService {
         mode: PostModeEnum.showId
       };
     });
-  }
-
-  private storePosts(posts: Post[]){
-    this.posts = [
-      ...posts
-    ];
   }
 
 }
