@@ -9,9 +9,9 @@ import { PostModeEnum } from '../models/post-mode.enum';
   providedIn: 'root'
 })
 export class PostsService {
-  private _postsLoaded$ = new BehaviorSubject<boolean>(false);
+  private _isLoading$ = new BehaviorSubject<boolean>(false);
   get isLoading$(){
-    return this._postsLoaded$.asObservable();
+    return this._isLoading$.asObservable();
   }
 
   private _posts$ = new BehaviorSubject<Post[]>([]);
@@ -25,7 +25,7 @@ export class PostsService {
   }
 
   loadAll(){
-    this._postsLoaded$.next(true);
+    this._isLoading$.next(true);
 
     return this.postsApiService
       .getPosts()
@@ -38,7 +38,7 @@ export class PostsService {
           this._posts$.next(posts);
         }),
         finalize(()=>{
-          this._postsLoaded$.next(false);
+          this._isLoading$.next(false);
         })
       );
   }
