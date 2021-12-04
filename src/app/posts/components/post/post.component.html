@@ -1,0 +1,19 @@
+<div class="post-content" (click)="onPostClick()">
+  <div class="post-title"
+       [title]="postDetails?.title">
+    {{ postDetails?.title }}
+  </div>
+  <div class="post-body"
+       [title]="postDetails?.body">
+    {{ postDetails?.body }}
+  </div>
+  <div class="post-id">
+    <span *ngIf="postDetails?.mode === postMode.showId">
+      ID {{ postDetails?.id }}
+    </span>
+    <span *ngIf="postDetails?.mode === postMode.showUserId">
+      USER ID {{ postDetails?.userId }}
+    </span>
+  </div>
+</div>
+

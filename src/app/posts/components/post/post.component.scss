@@ -1,0 +1,47 @@
+:host {
+  width: 9%;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  box-shadow: 0 .125rem .25rem var(--border-shadow);
+  background-color: var(--app-white);
+}
+
+.post-content {
+  height: 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  cursor: pointer;
+
+  div {
+    padding: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .post-id {
+    color: var(--app-light-text);
+  }
+
+  .post-title {
+    background: var(--app-light-yellow);
+    font-weight: bold;
+    min-height: 3.5rem;
+    border-bottom: 1px solid var(--border-color);
+
+    &:first-letter {
+      text-transform: capitalize;
+    }
+  }
+
+  .post-body {
+    flex-grow: 1;
+    white-space: pre-line;
+
+    &:first-letter {
+      text-transform: capitalize;
+    }
+  }
+}
