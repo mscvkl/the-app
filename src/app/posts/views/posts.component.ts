@@ -35,4 +35,8 @@ export class PostsComponent implements OnInit, OnDestroy {
     this.postsService.toggleMode(post.id, post.mode);
   }
 
+  trackById(index: number, post: Post){
+    return post?.id;
+  }
+
 }
