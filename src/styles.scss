@@ -13,3 +13,14 @@ body {
   font-family: sans-serif;
   background-color: var(--app-light-grey);
 }
+
+.page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  .message {
+    font-size: 1.5rem;
+  }
+}

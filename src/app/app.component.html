@@ -1,1 +1,7 @@
-<router-outlet></router-outlet>
+<div class="page-container"
+     *ngIf="isLoading">
+  <p class="message">Loading...</p>
+</div>
+<div *ngIf="!isLoading">
+  <router-outlet></router-outlet>
+</div>
