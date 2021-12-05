@@ -43,14 +43,14 @@ export class PostsService {
       );
   }
 
-  toggleMode(postId: number, mode?: PostModeEnum){
+  toggleMode(postId: number){
     let posts: Post[] = [];
 
     this._posts$.getValue().forEach((post)=>{
       posts.push({
         ...post,
         mode: post.id === postId
-          ? (mode === PostModeEnum.showId ? PostModeEnum.showUserId : PostModeEnum.showId)
+          ? (post.mode === PostModeEnum.showId ? PostModeEnum.showUserId : PostModeEnum.showId)
           : post.mode
       });
     });

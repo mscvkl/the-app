@@ -22,7 +22,7 @@ export class PostsComponent implements OnInit {
   }
 
   onPostClicked(post: Post): void {
-    this.postsService.toggleMode(post.id, post.mode);
+    this.postsService.toggleMode(post.id);
   }
 
   trackById(index: number, post: Post){
